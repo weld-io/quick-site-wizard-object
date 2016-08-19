@@ -1,0 +1,114 @@
+<form name="inputForm" method="post" autocomplete="on">
+
+<input name="file" id="getimage" type="file" accept="image/*"> <!-- ng-model="user.pictureFile"-->
+
+<input type="text" id="personnumber" placeholder="ååmmddXXXX" name="userPersonalNumber" required>   <!-- ng-model="user.orgnr" -->
+
+<input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required> <!-- ng-model="user.name" ng-model-options="{debounce: 1000}" ng-change="autofillDomain(user.name,user.domainname)" -->
+
+<input type="email"  id="user-email" placeholder="example@gmail.com" name="userEmail" required> <!-- ng-change="activateCreatePageButton()" ng-model="user.email" -->
+
+<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" required> <!-- ng-model="user.phone" -->
+
+<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required> <!-- ng-model="user.address1" -->
+
+<input type="text" id="user-city" name="userCity" required> <!-- ng-model="user.city" ng-init="user.city='Stockholm'" -->
+
+<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> <!-- ng-model="user.zipcode" -->
+
+<input type="text" id="user-countrycode" name="userCountrycode" required> <!-- country-select is-eu="isEUboolean" ng-model="user.countrycode" -->
+
+<button type="submit">Submit</button>
+</form>
+
+
+<script>
+
+var DEBUG_MODE = true;
+
+var SERVER_URL = 'https://www.weld.io/';
+if (DEBUG_MODE === 'staging') {
+	SERVER_URL = 'https://weld-staging.herokuapp.com/';
+}
+else if (DEBUG_MODE) {
+	SERVER_URL = 'http://localhost:9000/';
+}
+
+$(document).ready(function() {
+
+		// process the form
+		$('form').submit(function(e) {
+
+			// TODO: Add Country Code picker
+			// TODO: Add image uploader (Base-64)
+
+			var user = {
+				'userPersonalNumber': $('input[name=userPersonalNumber]').val(),
+				'userName': $('input[name=userName]').val(),
+				'userEmail': $('input[name=userEmail]').val(),
+				'userPhone': $('input[name=userPhone]').val().toString(),
+				'userAddress': $('input[name=userAddress]').val(),
+				'userCity': $('input[name=userCity]').val(),
+				'userZipcode': $('input[name=userZipcode]').val().toString(),
+				'userCountrycode': $('input[name=userCountrycode]').val(),
+				'userDomainName': $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, ''),
+				'tags': []
+			};
+
+			// TODO: Add autofillDomain that takes user's name
+
+			var searchDomain = _.throttle(function(domain) {
+				// Do a jQuery GET request to our domain-staging
+				// TODO: Change to the production server
+				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.userDomainName + '.se';
+				$.get('searchDomainUrl', function(user) {
+							// TODO: Pass in our user object with our search
+							// place success code here
+							// searchDomainNU(); // TODO: Run searchDomainNU() from in here
+					})
+				.fail(function(data) {
+						// place error code here
+						console.log("Error: ", data);
+				});
+			}, 3000);
+
+			// After searching for a .SE domain, proceed to search for a .NU domain
+			var searchDomainNU = _.throttle(function(domain) {
+				// Do a jQuery GET request to our domain-staging
+				// TODO: Change to the production server
+				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.userDomainName + '.nu';
+				$.get('searchDomainUrl', function(user) {
+							// TODO: Pass in our user object with our search
+							// place success code here
+					})
+				.fail(function(data) {
+						// place error code here
+						console.log("Error: ", data);
+				});
+			}, 3000);
+
+			// TODO: Add buttons if domain is available or not.
+			// TODO: Add link to terms.
+			// TODO: Set user.domainname equal to the chosen one
+
+			var register = function() {
+
+				// TODO: Set user.orgnr - Refer to lines 121 & 122 in festivalminne's app.js
+				var data = JSON.stringify(user);
+				var registerUrl = SERVER_URL + 'api/users'; 
+				$.post(registerUrl, data)
+				.done(function(data) {
+					console.log("Data loaded: ", data)
+				})
+				.fail(function() {
+					console.log("Error registering");
+				})
+				;
+			};
+
+		e.preventDefault();
+		});
+
+});
+
+</script>
