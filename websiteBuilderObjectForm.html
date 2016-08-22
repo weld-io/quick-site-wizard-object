@@ -2,7 +2,7 @@
 
 <input name="file" id="getimage" type="file" accept="image/*"> <!-- ng-model="user.pictureFile"-->
 
-<input type="text" id="personnumber" placeholder="ååmmddXXXX" name="userPersonalNumber" required>   <!-- ng-model="user.orgnr" -->
+<input type="text" id="personnumber" placeholder="ååmmddXXXX" name="userPersonalNumber" pattern="[0-9]{10}" required>   <!-- ng-model="user.orgnr" -->
 
 <input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required> <!-- ng-model="user.name" ng-model-options="{debounce: 1000}" ng-change="autofillDomain(user.name,user.domainname)" -->
 
@@ -41,26 +41,31 @@ $(document).ready(function() {
 
 			// TODO: Add Country Code picker
 			// TODO: Add image uploader (Base-64)
-
-			var user = {
-				'userPersonalNumber': $('input[name=userPersonalNumber]').val(),
-				'userName': $('input[name=userName]').val(),
-				'userEmail': $('input[name=userEmail]').val(),
-				'userPhone': $('input[name=userPhone]').val().toString(),
-				'userAddress': $('input[name=userAddress]').val(),
-				'userCity': $('input[name=userCity]').val(),
-				'userZipcode': $('input[name=userZipcode]').val().toString(),
-				'userCountrycode': $('input[name=userCountrycode]').val(),
-				'userDomainName': $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, ''),
-				'tags': []
+			// TODO: Add pictureFile to the User object below
+			
+			// Convert the personal number into a hyphen separated orgnr
+			var orgnrGenerator = function() {
+				var matches = $('input[name=userPersonalNumber]').val().match(/^(19|20)?([0-9]{6})[- ]?([0-9]{4})$/);
+				var newOrgNr = matches[2] + '-' + matches[3];
+				return newOrgNr;
 			};
 
-			// TODO: Add autofillDomain that takes user's name
+			var user = {
+				'orgnr': orgnrGenerator(),
+				'name': $('input[name=userName]').val(),
+				'email': $('input[name=userEmail]').val(),
+				'phone': $('input[name=userPhone]').val(),
+				'address1': $('input[name=userAddress]').val(),
+				'city': $('input[name=userCity]').val(),
+				'zipcode': $('input[name=userZipcode]').val(),
+				'countrycode': $('input[name=userCountrycode]').val(),
+				'tags': []
+			};
 
 			var searchDomain = _.throttle(function(domain) {
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
-				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.userDomainName + '.se';
+				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.se';
 				$.get('searchDomainUrl', function(user) {
 							// TODO: Pass in our user object with our search
 							// place success code here
@@ -76,7 +81,7 @@ $(document).ready(function() {
 			var searchDomainNU = _.throttle(function(domain) {
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
-				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.userDomainName + '.nu';
+				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.nu';
 				$.get('searchDomainUrl', function(user) {
 							// TODO: Pass in our user object with our search
 							// place success code here
@@ -86,6 +91,14 @@ $(document).ready(function() {
 						console.log("Error: ", data);
 				});
 			}, 3000);
+
+			var autofillDomain = function() {
+				user.domainname = user.name.toLowerCase().replace(/[\s]/g, '');
+				searchDomain();
+			};
+
+			$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
+
 
 			// TODO: Add buttons if domain is available or not.
 			// TODO: Add link to terms.
