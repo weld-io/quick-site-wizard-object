@@ -34,10 +34,54 @@ else if (DEBUG_MODE) {
 
 $(document).ready(function() {
 
+		var autofillDomain = function() {
+			var user = {};
+			user.domainname = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
+			console.log("User domain from autofillDomain func: ", user.domainname);
+			searchDomain(user);
+		};
+
+		// Listen for a change in the username input and run autofillDomain every 1 sec.
+		$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
+
+		var searchDomain = _.throttle(function(user) {
+				// TODO: Handle the show/hide of buttons
+				// Do a jQuery GET request to our domain-staging
+				// TODO: Change to the production server
+			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.domainname + '.se';
+				console.log("Search Domain Url: ",searchDomainUrl);
+			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
+				console.log(data, textStatus);
+				searchDomainNU(user);
+			})
+			.fail(function(err) {
+				console.log("SE Not available:", err.responseText, err);
+				searchDomainNU(user);
+			});
+		}, 3000);
+
+		// TODO: Add buttons if domain is available or not.
+		// TODO: Add link to terms.
+		// TODO: Set user.domainname equal to the chosen one
+
+		// After searching for a .SE domain, proceed to search for a .NU domain
+		var searchDomainNU = _.throttle(function(user) {
+			// TODO: Handle the show/hide of buttons
+			// Do a jQuery GET request to our domain-staging
+			// TODO: Change to the production server
+			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.domainname + '.nu';
+			console.log("NU Domain search url: ", searchDomainUrlNu);
+			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
+				console.log("Search Domain Nu: ", data, textStatus);
+			})
+			.fail(function(err) {
+				console.log("NU Not available:", err.responseText, err);
+			});
+		}, 3000);
+
 		// process the form
 		$('form').submit(function(e) {
 
-			// TODO: Add Country Code picker
 			// TODO: Add image uploader (Base-64)
 			// TODO: Add pictureFile to the User object below
 
@@ -52,56 +96,6 @@ $(document).ready(function() {
 				'countrycode': '{{user-country}}' || 'se',
 				'tags': []
 			};
-
-			var autofillDomain = function() {
-				user.domainname = user.name.toLowerCase().replace(/[\s]/g, '');
-				searchDomain(user);
-			};
-
-			// Listen for a change in the username input and run autofillDomain every 1 sec.
-			$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
-
-			var searchDomain = _.throttle(function(user) {
-				// TODO: Handle the show/hide of buttons
-				// Do a jQuery GET request to our domain-staging
-				// TODO: Change to the production server
-				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.se';
-				$.get('searchDomainUrl', user, function(data, status) {
-					console.log("SearchDomain Response:", data);
-					console.log("SearchDomain Status:", status);
-							// TODO: Pass in our user object with our search
-							// place success code here
-							searchDomainNU(); // TODO: Run searchDomainNU() from in here
-					})
-				.fail(function(data) {
-						// place error code here
-						console.log("Error: ", data);
-				});
-			}, 3000);
-
-			// After searching for a .SE domain, proceed to search for a .NU domain
-			var searchDomainNU = _.throttle(function(user) {
-				// TODO: Handle the show/hide of buttons
-				// Do a jQuery GET request to our domain-staging
-				// TODO: Change to the production server
-				var searchDomainUrlNu = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.nu';
-				$.get('searchDomainUrlNu', user, function(data, status) {
-					console.log("searchDomainNU Response:", data);
-					console.log("searchDomainNU Status:", status);
-							// TODO: Pass in our user object with our search
-							// place success code here
-					})
-				.fail(function(data) {
-						// place error code here
-						console.log("Error: ", data);
-				});
-			}, 3000);
-
-
-
-			// TODO: Add buttons if domain is available or not.
-			// TODO: Add link to terms.
-			// TODO: Set user.domainname equal to the chosen one
 
 			var register = function() {
 				console.log("Placeholder: Hello from the register function");
