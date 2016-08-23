@@ -1,26 +1,24 @@
-<form name="inputForm" method="post" autocomplete="on">
+<form name="inputForm"  autocomplete="on">
 
-<input name="file" id="getimage" type="file" accept="image/*"> <!-- ng-model="user.pictureFile"-->
+	<input name="file" id="getimage" type="file" accept="image/*"> <!-- ng-model="user.pictureFile"-->
 
-<input type="text" id="personnumber" placeholder="ååmmddXXXX" name="userPersonalNumber" pattern="[0-9]{10}" required>   <!-- ng-model="user.orgnr" -->
+	<input type="text" id="personnumber" placeholder="ååmmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>   <!-- ng-model="user.orgnr" -->
 
-<input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required> <!-- ng-model="user.name" ng-model-options="{debounce: 1000}" ng-change="autofillDomain(user.name,user.domainname)" -->
+	<input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required> <!-- ng-model="user.name" ng-model-options="{debounce: 1000}" ng-change="autofillDomain(user.name,user.domainname)" -->
 
-<input type="email"  id="user-email" placeholder="example@gmail.com" name="userEmail" required> <!-- ng-change="activateCreatePageButton()" ng-model="user.email" -->
+	<input type="email"  id="user-email" placeholder="example@gmail.com" name="userEmail" required> <!-- ng-change="activateCreatePageButton()" ng-model="user.email" -->
 
-<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" required> <!-- ng-model="user.phone" -->
+	<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" required> <!-- ng-model="user.phone" -->
 
-<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required> <!-- ng-model="user.address1" -->
+	<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required> <!-- ng-model="user.address1" -->
 
-<input type="text" id="user-city" name="userCity" required> <!-- ng-model="user.city" ng-init="user.city='Stockholm'" -->
+	<input type="text" id="user-city" name="userCity" placeholder="Stockholm" required> <!-- ng-model="user.city" ng-init="user.city='Stockholm'" -->
 
-<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> <!-- ng-model="user.zipcode" -->
+	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> <!-- ng-model="user.zipcode" -->
 
-<input type="text" id="user-countrycode" name="userCountrycode" required> <!-- country-select is-eu="isEUboolean" ng-model="user.countrycode" -->
+	<button type="submit">Submit</button>
 
-<button type="submit">Submit</button>
 </form>
-
 
 <script>
 
@@ -42,27 +40,29 @@ $(document).ready(function() {
 			// TODO: Add Country Code picker
 			// TODO: Add image uploader (Base-64)
 			// TODO: Add pictureFile to the User object below
-			
-			// Convert the personal number into a hyphen separated orgnr
-			var orgnrGenerator = function() {
-				var matches = $('input[name=userPersonalNumber]').val().match(/^(19|20)?([0-9]{6})[- ]?([0-9]{4})$/);
-				var newOrgNr = matches[2] + '-' + matches[3];
-				return newOrgNr;
-			};
 
 			var user = {
-				'orgnr': orgnrGenerator(),
+				'orgnr': $('input[name=userPersonalNumber]').val(),
 				'name': $('input[name=userName]').val(),
 				'email': $('input[name=userEmail]').val(),
 				'phone': $('input[name=userPhone]').val(),
 				'address1': $('input[name=userAddress]').val(),
-				'city': $('input[name=userCity]').val(),
+				'city': '{{user-city}}' || 'Stockholm',
 				'zipcode': $('input[name=userZipcode]').val(),
-				'countrycode': $('input[name=userCountrycode]').val(),
+				'countrycode': '{{user-country}}' || 'se',
 				'tags': []
 			};
 
+			var autofillDomain = function() {
+				user.domainname = user.name.toLowerCase().replace(/[\s]/g, '');
+				searchDomain();
+			};
+
+			// Listen for a change in the username input and run autofillDomain every 1 sec.
+			$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
+
 			var searchDomain = _.throttle(function(domain) {
+				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
 				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.se';
@@ -79,6 +79,7 @@ $(document).ready(function() {
 
 			// After searching for a .SE domain, proceed to search for a .NU domain
 			var searchDomainNU = _.throttle(function(domain) {
+				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
 				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.nu';
@@ -92,12 +93,6 @@ $(document).ready(function() {
 				});
 			}, 3000);
 
-			var autofillDomain = function() {
-				user.domainname = user.name.toLowerCase().replace(/[\s]/g, '');
-				searchDomain();
-			};
-
-			$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
 
 
 			// TODO: Add buttons if domain is available or not.
@@ -105,16 +100,17 @@ $(document).ready(function() {
 			// TODO: Set user.domainname equal to the chosen one
 
 			var register = function() {
-
-				// TODO: Set user.orgnr - Refer to lines 121 & 122 in festivalminne's app.js
+				// TODO: Create activate page button disable here
 				var data = JSON.stringify(user);
 				var registerUrl = SERVER_URL + 'api/users'; 
 				$.post(registerUrl, data)
 				.done(function(data) {
 					console.log("Data loaded: ", data)
+					// TODO: Handle registration, i.e. show loading image,
 				})
 				.fail(function() {
 					console.log("Error registering");
+					// TODO: Add an alert to accept ToS.
 				})
 				;
 			};
