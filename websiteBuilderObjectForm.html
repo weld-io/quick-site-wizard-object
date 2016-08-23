@@ -1,3 +1,9 @@
+<style>
+.hidden {
+	display: none !important; 
+}
+</style>
+
 <form name="inputForm"  autocomplete="on">
 
 <!-- 	<input name="file" id="getimage" type="file" accept="image/*">  -->
@@ -16,21 +22,28 @@
 
 	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> <!-- ng-model="user.zipcode" -->
 
+	<div id="buttondiv">
+		<button id="seButton" class="hidden">Select .SE</button><br />
+		<button id="nuButton" class="hidden">Select .NU</button><br />
+	</div>
+
 	<button type="submit">Submit</button>
+	<!-- TODO: Add accept-terms div -->
+	<!-- TODO: Add error div -->
 
 </form>
 
 <script>
 
-var DEBUG_MODE = true;
+// var DEBUG_MODE = true;
 
-var SERVER_URL = 'https://www.weld.io/';
-if (DEBUG_MODE === 'staging') {
-	SERVER_URL = 'https://weld-staging.herokuapp.com/';
-}
-else if (DEBUG_MODE) {
-	SERVER_URL = 'http://localhost:9000/';
-}
+// var SERVER_URL = 'https://www.weld.io/';
+// if (DEBUG_MODE === 'staging') {
+// 	SERVER_URL = 'https://weld-staging.herokuapp.com/';
+// }
+// else if (DEBUG_MODE) {
+// 	SERVER_URL = 'http://localhost:9000/';
+// }
 
 $(document).ready(function() {
 
@@ -53,10 +66,12 @@ $(document).ready(function() {
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
 				console.log(data, textStatus);
 				searchDomainNU(user);
+				$('#seButton').html('Välj ' + user.domainname + '.se').toggleClass('hidden');
 			})
 			.fail(function(err) {
 				console.log("SE Not available:", err.responseText, err);
 				searchDomainNU(user);
+				// Make the #seButton hide 
 			});
 		}, 3000);
 
@@ -73,9 +88,11 @@ $(document).ready(function() {
 			console.log("NU Domain search url: ", searchDomainUrlNu);
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
 				console.log("Search Domain Nu: ", data, textStatus);
+				$('#nuButton').html('Välj ' + user.domainname + '.nu').toggleClass('hidden');
 			})
 			.fail(function(err) {
 				console.log("NU Not available:", err.responseText, err);
+				// Make the #nuButton hide
 			});
 		}, 3000);
 
