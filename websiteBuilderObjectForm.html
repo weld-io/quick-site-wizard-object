@@ -1,6 +1,6 @@
 <form name="inputForm"  autocomplete="on">
 
-	<input name="file" id="getimage" type="file" accept="image/*"> <!-- ng-model="user.pictureFile"-->
+<!-- 	<input name="file" id="getimage" type="file" accept="image/*">  -->
 
 	<input type="text" id="personnumber" placeholder="ååmmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>   <!-- ng-model="user.orgnr" -->
 
@@ -55,21 +55,23 @@ $(document).ready(function() {
 
 			var autofillDomain = function() {
 				user.domainname = user.name.toLowerCase().replace(/[\s]/g, '');
-				searchDomain();
+				searchDomain(user);
 			};
 
 			// Listen for a change in the username input and run autofillDomain every 1 sec.
 			$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
 
-			var searchDomain = _.throttle(function(domain) {
+			var searchDomain = _.throttle(function(user) {
 				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
 				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.se';
-				$.get('searchDomainUrl', function(user) {
+				$.get('searchDomainUrl', user, function(data, status) {
+					console.log("SearchDomain Response:", data);
+					console.log("SearchDomain Status:", status);
 							// TODO: Pass in our user object with our search
 							// place success code here
-							// searchDomainNU(); // TODO: Run searchDomainNU() from in here
+							searchDomainNU(); // TODO: Run searchDomainNU() from in here
 					})
 				.fail(function(data) {
 						// place error code here
@@ -78,12 +80,14 @@ $(document).ready(function() {
 			}, 3000);
 
 			// After searching for a .SE domain, proceed to search for a .NU domain
-			var searchDomainNU = _.throttle(function(domain) {
+			var searchDomainNU = _.throttle(function(user) {
 				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
-				var searchDomainUrl = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.nu';
-				$.get('searchDomainUrl', function(user) {
+				var searchDomainUrlNu = "https://domain-staging.herokuapp.com/api/domain/" + user.domainname + '.nu';
+				$.get('searchDomainUrlNu', user, function(data, status) {
+					console.log("searchDomainNU Response:", data);
+					console.log("searchDomainNU Status:", status);
 							// TODO: Pass in our user object with our search
 							// place success code here
 					})
@@ -100,19 +104,20 @@ $(document).ready(function() {
 			// TODO: Set user.domainname equal to the chosen one
 
 			var register = function() {
+				console.log("Placeholder: Hello from the register function");
 				// TODO: Create activate page button disable here
-				var data = JSON.stringify(user);
-				var registerUrl = SERVER_URL + 'api/users'; 
-				$.post(registerUrl, data)
-				.done(function(data) {
-					console.log("Data loaded: ", data)
-					// TODO: Handle registration, i.e. show loading image,
-				})
-				.fail(function() {
-					console.log("Error registering");
-					// TODO: Add an alert to accept ToS.
-				})
-				;
+				// var data = JSON.stringify(user);
+				// var registerUrl = SERVER_URL + 'api/users'; 
+				// $.post(registerUrl, data)
+				// .done(function(data) {
+				// 	console.log("Data loaded: ", data)
+				// 	// TODO: Handle registration, i.e. show loading image,
+				// })
+				// .fail(function() {
+				// 	console.log("Error registering");
+				// 	// TODO: Add an alert to accept ToS.
+				// })
+				// ;
 			};
 
 		e.preventDefault();
