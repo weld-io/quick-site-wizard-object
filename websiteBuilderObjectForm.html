@@ -27,9 +27,22 @@
 		<button id="nuButton" class="hidden">Select .NU</button><br />
 	</div>
 
-	<button type="submit">Submit</button>
 	<!-- TODO: Add accept-terms div -->
+	<div class="accept-terms">
+		<label>
+			<fieldset>
+				<input type="checkbox"> <!-- ng-model="checkboxModel.value" -->
+				Jag godkänner: <br />
+				&bull; <a href="https://www.weld.io/terms" target="_blank">Welds användarvillkor</a><br>
+				&bull; <a target="_blank" id="domain-terms"></a><br>
+				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs användaravtal</a>
+			</fieldset>
+		</label>
+	</div>
 	<!-- TODO: Add error div -->
+
+	<button type="submit">Submit</button>
+
 
 </form>
 
@@ -57,6 +70,15 @@ $(document).ready(function() {
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
 		$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
 
+		// Listen for .SE or .NU domain selection and add ToS link to domain-terms
+		$('#seButton').on('click', function () {
+			$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Avtal för toppdomänen .SE')
+		});
+
+		$('#nuButton').on('click', function () {
+			$('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Avtal för toppdomänen .NU')
+		});
+
 		var searchDomain = _.throttle(function(user) {
 				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
@@ -66,10 +88,12 @@ $(document).ready(function() {
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
 				console.log(data, textStatus);
 				searchDomainNU(user);
-				$('#seButton').html('Välj ' + user.domainname + '.se').toggleClass('hidden');
+				$('#seButton').html('Select ' + user.domainname + '.se').toggleClass('hidden');
+				// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("SE Not available:", err.responseText, err);
+				$('#seButton').html(user.domainname + '.se is unavailable').toggleClass('hidden');
 				searchDomainNU(user);
 				// Make the #seButton hide 
 			});
@@ -88,16 +112,17 @@ $(document).ready(function() {
 			console.log("NU Domain search url: ", searchDomainUrlNu);
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
 				console.log("Search Domain Nu: ", data, textStatus);
-				$('#nuButton').html('Välj ' + user.domainname + '.nu').toggleClass('hidden');
+				$('#nuButton').html('Select ' + user.domainname + '.nu').toggleClass('hidden');// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("NU Not available:", err.responseText, err);
+				$('#nuButton').html(user.domainname + '.nu is unavailable').toggleClass('hidden');
 				// Make the #nuButton hide
 			});
 		}, 3000);
 
-		// process the form
-		$('form').submit(function(e) {
+	// process the form
+	$('form').submit(function(e) {
 
 			// TODO: Add image uploader (Base-64)
 			// TODO: Add pictureFile to the User object below
@@ -116,6 +141,7 @@ $(document).ready(function() {
 
 			var register = function() {
 				console.log("Placeholder: Hello from the register function");
+				// TODO: Create if statement wrapping the whole registration conditional on ToS Checkbox. True = register, False = accept ToS. 
 				// TODO: Create activate page button disable here
 				// var data = JSON.stringify(user);
 				// var registerUrl = SERVER_URL + 'api/users'; 
@@ -130,9 +156,10 @@ $(document).ready(function() {
 				// })
 				// ;
 			};
+			register();
 
-		e.preventDefault();
-		});
+	e.preventDefault();
+	});
 
 });
 
