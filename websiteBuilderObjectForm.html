@@ -18,30 +18,32 @@
 
 	<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required> <!-- ng-model="user.address1" -->
 
-	<input type="text" id="user-city" name="userCity" placeholder="Stockholm" required> <!-- ng-model="user.city" ng-init="user.city='Stockholm'" -->
+	<input type="text" id="user-city" name="userCity" placeholder="Stockholm"> <!-- ng-model="user.city" ng-init="user.city='Stockholm'" -->
 
 	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> <!-- ng-model="user.zipcode" -->
 
+	<!-- TODO: Add domain name field -->
+
 	<div id="buttondiv">
-		<button id="seButton" class="hidden">Select .SE</button><br />
-		<button id="nuButton" class="hidden">Select .NU</button><br />
+		<button id="seButton" class="hidden" type="button"></button><br />
+		<button id="nuButton" class="hidden" type="button"></button><br />
 	</div>
 
-	<!-- TODO: Add accept-terms div -->
-	<div class="accept-terms">
+	<div class="accept-terms hidden" id="accept-terms">
 		<label>
 			<fieldset>
-				<input type="checkbox"> <!-- ng-model="checkboxModel.value" -->
+				<input type="checkbox" class="accept-domain-checkbox"> <!-- ng-model="checkboxModel.value" -->
 				Jag godkänner: <br />
 				&bull; <a href="https://www.weld.io/terms" target="_blank">Welds användarvillkor</a><br>
 				&bull; <a target="_blank" id="domain-terms"></a><br>
-				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs användaravtal</a>
+				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs användaravtal</a><br />
 			</fieldset>
 		</label>
 	</div>
-	<!-- TODO: Add error div -->
 
-	<button type="submit">Submit</button>
+	<span id="errorSpan" class="hidden">Beklagar! Din email-adress finns redan registrerad hos Weld.</span><br />
+
+	<button type="submit" id="create-page-button" class="hidden">Skapa min sida!</button>
 
 
 </form>
@@ -59,9 +61,10 @@
 // }
 
 $(document).ready(function() {
+		var user = {};
 
 		var autofillDomain = function() {
-			var user = {};
+			// TODO: Add if conditional on domain field filled, otherwise use userName
 			user.domainname = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
 			console.log("User domain from autofillDomain func: ", user.domainname);
 			searchDomain(user);
@@ -70,13 +73,24 @@ $(document).ready(function() {
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
 		$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
 
+		// TODO: Add listener for change on domain name input and run searchDomain, must pass it a user object
+
 		// Listen for .SE or .NU domain selection and add ToS link to domain-terms
 		$('#seButton').on('click', function () {
-			$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Avtal för toppdomänen .SE')
+			$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Avtal för toppdomänen .SE');
+			$('#accept-terms').toggleClass('hidden');
+			// TODO: Make it select the .SE domain as user.domainname
 		});
 
 		$('#nuButton').on('click', function () {
-			$('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Avtal för toppdomänen .NU')
+			$('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Avtal för toppdomänen .NU');
+			$('#accept-terms').toggleClass('hidden');
+			// TODO: Make it select the .NU domain as user.domainname
+		});
+
+		// Listen for checkbox being checked and add the register button:
+		$('.accept-domain-checkbox').change(function() {
+			$('#create-page-button').toggleClass('hidden');
 		});
 
 		var searchDomain = _.throttle(function(user) {
@@ -84,9 +98,7 @@ $(document).ready(function() {
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
 			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.domainname + '.se';
-				console.log("Search Domain Url: ",searchDomainUrl);
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
-				console.log(data, textStatus);
 				searchDomainNU(user);
 				$('#seButton').html('Select ' + user.domainname + '.se').toggleClass('hidden');
 				// TODO: Fix bug where it removes button on 2nd search
@@ -109,9 +121,7 @@ $(document).ready(function() {
 			// Do a jQuery GET request to our domain-staging
 			// TODO: Change to the production server
 			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.domainname + '.nu';
-			console.log("NU Domain search url: ", searchDomainUrlNu);
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-				console.log("Search Domain Nu: ", data, textStatus);
 				$('#nuButton').html('Select ' + user.domainname + '.nu').toggleClass('hidden');// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
@@ -126,7 +136,7 @@ $(document).ready(function() {
 
 			// TODO: Add image uploader (Base-64)
 			// TODO: Add pictureFile to the User object below
-
+			// TODO: Make it access the domain name from here
 			var user = {
 				'orgnr': $('input[name=userPersonalNumber]').val(),
 				'name': $('input[name=userName]').val(),
@@ -136,13 +146,15 @@ $(document).ready(function() {
 				'city': '{{user-city}}' || 'Stockholm',
 				'zipcode': $('input[name=userZipcode]').val(),
 				'countrycode': '{{user-country}}' || 'se',
-				'tags': []
+				'tags': ["Opt-out: Welcome/Onboarding Email"]
 			};
 
 			var register = function() {
 				console.log("Placeholder: Hello from the register function");
-				// TODO: Create if statement wrapping the whole registration conditional on ToS Checkbox. True = register, False = accept ToS. 
-				// TODO: Create activate page button disable here
+				console.log("user: ", user);
+
+				
+				
 				// var data = JSON.stringify(user);
 				// var registerUrl = SERVER_URL + 'api/users'; 
 				// $.post(registerUrl, data)
@@ -152,7 +164,7 @@ $(document).ready(function() {
 				// })
 				// .fail(function() {
 				// 	console.log("Error registering");
-				// 	// TODO: Add an alert to accept ToS.
+				// $('#errorSpan').toggleClass('hidden')
 				// })
 				// ;
 			};
