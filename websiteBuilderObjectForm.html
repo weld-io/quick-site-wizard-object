@@ -135,44 +135,32 @@ $(document).ready(function() {
 	$('form').submit(function(e) {
 			e.preventDefault();
 
-			// TODO: Add image uploader (Base-64)
-			var getBase64 = function() {
+			var getPictureFile = function() {
 				var file = document.getElementById('getimage').files[0];
-				// gives name, size, type
-				console.log("File: ", file);
+
 				var reader = new FileReader();
 
 				reader.onload = function(e) {
 				  var dataURL = reader.result;
-				  console.log('full dataUrl: ', dataURL);
-				  var justBase64 = dataURL.split('base64,')[1]; // works on any img format: PNG, JPG etc.
+				  var justBase64 = dataURL.split('base64,')[1];
 				  console.log("just base64: ", justBase64);
-				}
+				};
 
 				reader.readAsDataURL(file);
-
-				// ORIGINAL CODE:
-				// console.log("Filename: ", file.name);
-				// var reader = new FileReader();
-				// console.log("Reader: ", reader);
-				// reader.readAsDataURL(file);
-				// console.log("Reader after: ", reader);
-			};
-			getBase64();
-
-			// TODO: Add pictureFile to the User object below, this structure:
-			/*
-			
-			'picturefile' : {
-				'filetype': 'image/png',
-				'filename': 'gplus_thumb.png',
-				'filesize': 23792,
+				
+				var picturefile = {
+				'filetype': file.type,
+				'filename': file.name,
+				'filesize': file.size,
 				'base64': '<superlongbase64string>' 
-			}
+				};
+				console.log('Picturefile: ', picturefile);
+			};
 
-			*/
+			getPictureFile();
 
 			// TODO: Make it access the domain name from here
+			// TODO: Add picturefile object
 			var user = {
 				'orgnr': $('input[name=userPersonalNumber]').val(),
 				'name': $('input[name=userName]').val(),
@@ -188,9 +176,7 @@ $(document).ready(function() {
 			var register = function() {
 				console.log("Placeholder: Hello from the register function");
 				console.log("user: ", user);
-
-				
-				
+				// TODO: Add HTTP POST below:
 				// var data = JSON.stringify(user);
 				// var registerUrl = SERVER_URL + 'api/users'; 
 				// $.post(registerUrl, data)
