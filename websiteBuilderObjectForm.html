@@ -4,9 +4,9 @@
 }
 </style>
 
-<form name="inputForm"  autocomplete="on">
+<form name="inputForm" autocomplete="on">
 
-<!-- 	<input name="file" id="getimage" type="file" accept="image/*">  -->
+	<input name="file" id="getimage" type="file" accept="image/*"> 
 
 	<input type="text" id="personnumber" placeholder="ååmmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>   <!-- ng-model="user.orgnr" -->
 
@@ -133,9 +133,45 @@ $(document).ready(function() {
 
 	// process the form
 	$('form').submit(function(e) {
+			e.preventDefault();
 
 			// TODO: Add image uploader (Base-64)
-			// TODO: Add pictureFile to the User object below
+			var getBase64 = function() {
+				var file = document.getElementById('getimage').files[0];
+				// gives name, size, type
+				console.log("File: ", file);
+				var reader = new FileReader();
+
+				reader.onload = function(e) {
+				  var dataURL = reader.result;
+				  console.log('full dataUrl: ', dataURL);
+				  var justBase64 = dataURL.split('base64,')[1]; // works on any img format: PNG, JPG etc.
+				  console.log("just base64: ", justBase64);
+				}
+
+				reader.readAsDataURL(file);
+
+				// ORIGINAL CODE:
+				// console.log("Filename: ", file.name);
+				// var reader = new FileReader();
+				// console.log("Reader: ", reader);
+				// reader.readAsDataURL(file);
+				// console.log("Reader after: ", reader);
+			};
+			getBase64();
+
+			// TODO: Add pictureFile to the User object below, this structure:
+			/*
+			
+			'picturefile' : {
+				'filetype': 'image/png',
+				'filename': 'gplus_thumb.png',
+				'filesize': 23792,
+				'base64': '<superlongbase64string>' 
+			}
+
+			*/
+
 			// TODO: Make it access the domain name from here
 			var user = {
 				'orgnr': $('input[name=userPersonalNumber]').val(),
@@ -169,8 +205,6 @@ $(document).ready(function() {
 				// ;
 			};
 			register();
-
-	e.preventDefault();
 	});
 
 });
