@@ -14,7 +14,7 @@
 
 	<input type="email"  id="user-email" placeholder="example@gmail.com" name="userEmail" required>
 
-	<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" required>
+	<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" required>
 
 	<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required>
 
@@ -22,7 +22,7 @@
 
 	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> 
 
-	<!-- TODO: Add domain name field -->
+	<input type="text" id="user-domainname" placeholder="ValfriDomän" name="userDomain">
 
 	<div id="buttondiv">
 		<button id="seButton" class="hidden" type="button"></button><br />
@@ -50,15 +50,15 @@
 
 <script>
 
-// var DEBUG_MODE = true;
+var DEBUG_MODE = true;
 
-// var SERVER_URL = 'https://www.weld.io/';
-// if (DEBUG_MODE === 'staging') {
-// 	SERVER_URL = 'https://weld-staging.herokuapp.com/';
-// }
-// else if (DEBUG_MODE) {
-// 	SERVER_URL = 'http://localhost:9000/';
-// }
+var SERVER_URL = 'https://www.weld.io/';
+if (DEBUG_MODE === 'staging') {
+	SERVER_URL = 'https://weld-staging.herokuapp.com/';
+}
+else if (DEBUG_MODE) {
+	SERVER_URL = 'http://localhost:9000/';
+}
 
 $(document).ready(function() {
 		var user = {
@@ -72,14 +72,12 @@ $(document).ready(function() {
 		// Create a picturefile object out of the uploaded image
 		var getPictureFile = function() {
 			var file = document.getElementById('getimage').files[0];
-			console.log("File: ", file);
 			var reader = new FileReader();
 
 			reader.onload = function(e) {
-			  var dataURL = reader.result;
-			  var justBase64 = dataURL.split('base64,')[1];
-			  console.log("just base64: ", justBase64);
-			  user.quickSite.image.base64 = justBase64;
+				var dataURL = reader.result;
+				var justBase64 = dataURL.split('base64,')[1];
+				user.quickSite.image.base64 = justBase64;
 			};
 
 			reader.readAsDataURL(file);
@@ -91,31 +89,28 @@ $(document).ready(function() {
 
 		var autofillDomain = function() {
 			// TODO: Add if conditional on domain field filled, otherwise use userName
-			user.quickSite.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
-			console.log("User domain from autofillDomain func: ", user.quickSite.domain);
+			user.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
 			searchDomain(user);
 		};
 
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
 		$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
 
-		// TODO: Add listener for change on domain name input and run searchDomain, must pass it a user object
-
 		// Listen for .SE or .NU domain selection and add ToS link to domain-terms
 		$('#seButton').on('click', function () {
 			$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Avtal för toppdomänen .SE');
 			$('#accept-terms').toggleClass('hidden');
-			// TODO: Verify that it selects the .SE domain as user.quickSite.domain
-			user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
-			user.quickSite.domain = user.quickSite.domain + '.se';
+			// TODO: Verify that it selects the .SE domain as user.domain
+			user.domain = user.domain.replace(/(.se|.nu)/, '');
+			user.domain = user.domain + '.se';
 		});
 
 		$('#nuButton').on('click', function () {
 			$('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Avtal för toppdomänen .NU');
 			$('#accept-terms').toggleClass('hidden');
-			// TODO: Verify that it selects the .NU domain as user.quickSite.domain
-			user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
-			user.quickSite.domain = user.quickSite.domain + '.nu';
+			// TODO: Verify that it selects the .NU domain as user.domain
+			user.domain = user.domain.replace(/(.se|.nu)/, '');
+			user.domain = user.domain + '.nu';
 		});
 
 		// Listen for checkbox being checked and add the register button:
@@ -127,15 +122,15 @@ $(document).ready(function() {
 				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
-			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.se';
+			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.se';
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
 				searchDomainNU(user);
-				$('#seButton').html('Select ' + user.quickSite.domain + '.se').toggleClass('hidden');
+				$('#seButton').html('Select ' + user.domain + '.se').toggleClass('hidden');
 				// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("SE Not available:", err.responseText, err);
-				$('#seButton').html(user.quickSite.domain + '.se is unavailable').toggleClass('hidden');
+				$('#seButton').html(user.domain + '.se is unavailable').toggleClass('hidden');
 				searchDomainNU(user);
 				// Make the #seButton hide 
 			});
@@ -143,20 +138,20 @@ $(document).ready(function() {
 
 		// TODO: Add buttons if domain is available or not.
 		// TODO: Add link to terms.
-		// TODO: Set user.quickSite.domain equal to the chosen one
+		// TODO: Set user.domain equal to the chosen one
 
 		// After searching for a .SE domain, proceed to search for a .NU domain
 		var searchDomainNU = _.throttle(function(user) {
 			// TODO: Handle the show/hide of buttons
 			// Do a jQuery GET request to our domain-staging
 			// TODO: Change to the production server
-			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.nu';
+			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-				$('#nuButton').html('Select ' + user.quickSite.domain + '.nu').toggleClass('hidden');// TODO: Fix bug where it removes button on 2nd search
+				$('#nuButton').html('Select ' + user.domain + '.nu').toggleClass('hidden');// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("NU Not available:", err.responseText, err);
-				$('#nuButton').html(user.quickSite.domain + '.nu is unavailable').toggleClass('hidden');
+				$('#nuButton').html(user.domain + '.nu is unavailable').toggleClass('hidden');
 				// Make the #nuButton hide
 			});
 		}, 3000);
@@ -173,39 +168,43 @@ $(document).ready(function() {
 			user.address1 = $('input[name=userAddress]').val();
 			user.city = '{{user-city}}' || 'Stockholm';
 			user.zipcode = $('input[name=userZipcode]').val();
-			user.countrycode = '{{user-country}}' || 'se';
+			user.countrycode = '{{user-countrycode}}' || 'se';
 			user.tags = ["Opt-out: Welcome/Onboarding Email"];
 
 			// FILLING IN THE USER.QUICKSITE OBJECT:
-			user.quickSite.debug = true;
-			user.quickSite.name = user.name + '’s website',
-			user.quickSite.description = 'Come and meet ' + user.name + '!';
-			user.quickSite.slug = user.quickSite.domain;
-			user.quickSite.template = 'my-template-slug';
-			user.quickSite.elementData = {
-				"text-12": { data: { text: 'My text' } },
-				"text-34": { data: { text: user.name + '’s website' } },
-				"image-56": { data: { imageSource: user.quickSite.image.base64 } },
+			var quickSiteTemplate = {
+				debug: true, // = don't register a real domain
+				name: "{{user.name}}'s website", // Note: you can use string templates and reference the entire `user` object
+				description: "Come and meet {{user.name}}!",
+				template: "my-template-slug",
+				elementData: {
+						"text-12": { data: { text: "My text" } },
+						"text-27": { data: { text: "{{user.name}}'s website" } },
+						"image-19": { data: { imageSource: "{{UPLOADED_IMAGE}}" } },
+				},
 			};
 
-			console.log("User in submit: ", user);
+			// Merge quickSiteTemplate into user.quickSite without overwriting
+			$.extend(user.quickSite, quickSiteTemplate);
 
 			var register = function() {
-				console.log("Placeholder: Hello from the register function");
 				console.log("user in register: ", user);
+				
 				// TODO: Add HTTP POST below:
-				// var data = JSON.stringify(user);
-				// var registerUrl = SERVER_URL + 'api/users'; 
-				// $.post(registerUrl, data)
-				// .done(function(data) {
-				// 	console.log("Data loaded: ", data)
-				// 	// TODO: Handle registration, i.e. show loading image,
-				// })
-				// .fail(function() {
-				// 	console.log("Error registering");
-				// $('#errorSpan').toggleClass('hidden')
-				// })
-				// ;
+				var data = JSON.stringify(user);
+				console.log("Data sent: ", data);
+				var registerUrl = SERVER_URL + 'api/users'; 
+				$.post(registerUrl, data)
+					.done(function(data) {
+						console.log("Data received: ", data)
+						$(thisElement).trigger('change');
+					})
+					.fail(function(err) {
+						console.log("Error registering: ", err.responseText, err);
+						$('#errorSpan').toggleClass('hidden'); // TODO: Make it dynamically insert the error message
+						$(thisElement).trigger('change');
+					})
+				;
 			};
 			register();
 	});
