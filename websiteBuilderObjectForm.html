@@ -2,6 +2,11 @@
 .hidden {
 	display: none !important; 
 }
+
+.nopadding {
+	padding: 0;
+}
+
 </style>
 
 <form name="inputForm" autocomplete="on">
@@ -25,8 +30,8 @@
 	<input type="text" id="user-domainname" placeholder="ValfriDomän" name="userDomain">
 
 	<div id="buttondiv">
-		<button id="seButton" class="hidden" type="button"></button><br />
-		<button id="nuButton" class="hidden" type="button"></button><br />
+		<button id="seButton" class="nopadding" type="button"></button><br />
+		<button id="nuButton" class="nopadding" type="button"></button><br />
 	</div>
 
 	<div class="accept-terms hidden" id="accept-terms">
@@ -90,11 +95,20 @@ $(document).ready(function() {
 		var autofillDomain = function() {
 			// TODO: Add if conditional on domain field filled, otherwise use userName
 			user.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
-			searchDomain(user);
+			$('input[name=userDomain]').val(user.domain).trigger("change");
+		};
+
+		var searchDomain = function(user) {
+			user.domain = $('input[name=userDomain]').val();
+			// Invoke the searchDomainSE from here and pass it the user
+			searchDomainSE(user);
 		};
 
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
-		$('input[name=userName]').on('change', _.debounce(autofillDomain, 1000));
+		$('input[name=userName]').on('change', autofillDomain);
+
+		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
+		$('input[name=userDomain]').on('change', searchDomain);
 
 		// Listen for .SE or .NU domain selection and add ToS link to domain-terms
 		$('#seButton').on('click', function () {
@@ -118,41 +132,41 @@ $(document).ready(function() {
 			$('#create-page-button').toggleClass('hidden');
 		});
 
-		var searchDomain = _.throttle(function(user) {
+		var searchDomainSE = _.throttle(function(user) {
 				// TODO: Handle the show/hide of buttons
 				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
 			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.se';
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
+				console.log("Data: ", data);
+				console.log("textStatus: ", textStatus);
 				searchDomainNU(user);
-				$('#seButton').html('Select ' + user.domain + '.se').toggleClass('hidden');
+				$('#seButton').html('Select ' + user.domain + '.se').removeClass('nopadding');
 				// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("SE Not available:", err.responseText, err);
-				$('#seButton').html(user.domain + '.se is unavailable').toggleClass('hidden');
+				$('#seButton').html(user.domain + '.se is unavailable').prop("disabled", true); // TODO: Change color to red
 				searchDomainNU(user);
 				// Make the #seButton hide 
 			});
 		}, 3000);
 
-		// TODO: Add buttons if domain is available or not.
 		// TODO: Add link to terms.
 		// TODO: Set user.domain equal to the chosen one
 
 		// After searching for a .SE domain, proceed to search for a .NU domain
 		var searchDomainNU = _.throttle(function(user) {
 			// TODO: Handle the show/hide of buttons
-			// Do a jQuery GET request to our domain-staging
 			// TODO: Change to the production server
 			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-				$('#nuButton').html('Select ' + user.domain + '.nu').toggleClass('hidden');// TODO: Fix bug where it removes button on 2nd search
+				$('#nuButton').html('Select ' + user.domain + '.nu').removeClass('nopadding');// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
 				console.log("NU Not available:", err.responseText, err);
-				$('#nuButton').html(user.domain + '.nu is unavailable').toggleClass('hidden');
-				// Make the #nuButton hide
+				$('#nuButton').html(user.domain + '.nu is unavailable').prop("disabled", true); // TODO: Change color to red
+				// 
 			});
 		}, 3000);
 
@@ -196,7 +210,7 @@ $(document).ready(function() {
 				var registerUrl = SERVER_URL + 'api/users'; 
 				$.post(registerUrl, data)
 					.done(function(data) {
-						console.log("Data received: ", data)
+						console.log("Data received: ", data);
 						$(thisElement).trigger('change');
 					})
 					.fail(function(err) {
