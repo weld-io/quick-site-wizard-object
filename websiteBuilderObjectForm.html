@@ -11,8 +11,6 @@
 
 <form name="inputForm" autocomplete="on">
 
-	<input name="file" id="getimage" type="file" accept="image/*"> 
-
 	<input type="text" id="personnumber" placeholder="ååmmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>
 
 	<input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required>
@@ -26,6 +24,8 @@
 	<input type="text" id="user-city" name="userCity" placeholder="Stockholm">
 
 	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> 
+
+	<input name="file" id="getimage" type="file" accept="image/*"> 
 
 	<input type="text" id="user-domainname" placeholder="ValfriDomän" name="userDomain">
 
@@ -205,18 +205,17 @@ $(document).ready(function() {
 				console.log("user in register: ", user);
 				
 				// TODO: Add HTTP POST below:
-				var data = JSON.stringify(user);
-				console.log("Data sent: ", data);
+				console.log("Data sent: ", user);
 				var registerUrl = SERVER_URL + 'api/users'; 
-				$.post(registerUrl, data)
+				$.post(registerUrl, user)
 					.done(function(data) {
 						console.log("Data received: ", data);
-						$(thisElement).trigger('change');
+						$(thisElement).trigger('change', ['success', {type: 'user', data: data}]);
 					})
 					.fail(function(err) {
 						console.log("Error registering: ", err.responseText, err);
 						$('#errorSpan').toggleClass('hidden'); // TODO: Make it dynamically insert the error message
-						$(thisElement).trigger('change');
+						$(thisElement).trigger('change', ['error', {type: 'error', data: err}]);
 					})
 				;
 			};
