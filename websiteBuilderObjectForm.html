@@ -3,55 +3,127 @@
 	display: none !important; 
 }
 
-.nopadding {
-	padding: 0;
+.quicksite-input {
+    margin: 5px 0;
+    padding: 8px 5px !important;
+    color: #4e5050;
+    border-radius: 0px !important;
+}
+
+.quicksite-input::-webkit-input-placeholder,
+.quicksite-input::-moz-placeholder,
+.quicksite-input:-ms-input-placeholder {
+    color: #777979;
+}
+
+.redbutton {
+  background-color: #f86060 !important;
+}
+
+.quicksite-button {
+  margin-top: 20px;
+  padding: 15px;
+}
+
+input.accept-domain-checkbox {
+    margin: 40px 5px;
+    height: 15px;
+}
+
+.quicksite-fieldset div {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 15px;
+}
+
+.quicksite-fieldset {
+    border: 1px solid #8f9190;
+    margin-top: 10px;
+    color: #777979;
+    max-width: 50% !important;
+    line-height: 1.5em;
+}
+
+.quicksite-fieldset a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+.quicksite-field a:hover {
+  color: #23527c;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    color: #c7c9cb;
+    border: 2px solid #c7c9cb;
+}
+
+.fa-check-circle {
+  color: #47e2a1;
 }
 
 </style>
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" type="text/css">
+<div class="weld-element">
 <form name="inputForm" autocomplete="on">
 
-	<input type="text" id="personnumber" placeholder="ååmmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>
+  <input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
+  
+	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" value="880503-0510" required>
 
-	<input type="text" id="user-name" placeholder="Förnamn Efternamn" name="userName" required>
+	<input class="quicksite-input" type="email" id="user-email" placeholder="example@gmail.com" name="userEmail" value="andre.elmoznino@gmail.com" required>
 
-	<input type="email"  id="user-email" placeholder="example@gmail.com" name="userEmail" required>
+	<input class="quicksite-input" type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" value="0729385370" required>
 
-	<input type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" required>
+	<input class="quicksite-input" type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" value="Furusundsgatan 5" required>
 
-	<input type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required>
+	<input class="quicksite-input" type="text" id="user-city" name="userCity" placeholder="Stockholm" value="Stockholm">
 
-	<input type="text" id="user-city" name="userCity" placeholder="Stockholm">
+	<input class="quicksite-input" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
 
-	<input type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> 
+<label for="getimage" class="custom-file-upload" id="custom-file-upload">
+  <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
+</label>
+<input class="quicksite-input" name="file" id="getimage" type="file" accept="image/*"> 
 
-	<input name="file" id="getimage" type="file" accept="image/*"> 
-
-	<input type="text" id="user-domainname" placeholder="ValfriDomän" name="userDomain">
+	<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
 
 	<div id="buttondiv">
-		<button id="seButton" class="nopadding" type="button"></button><br />
-		<button id="nuButton" class="nopadding" type="button"></button><br />
 	</div>
 
 	<div class="accept-terms hidden" id="accept-terms">
 		<label>
-			<fieldset>
-				<input type="checkbox" class="accept-domain-checkbox"> <!-- ng-model="checkboxModel.value" -->
-				Jag godkänner: <br />
-				&bull; <a href="https://www.weld.io/terms" target="_blank">Welds användarvillkor</a><br>
+			<fieldset class="quicksite-fieldset">
+      <div>
+        <input type="checkbox" class="accept-domain-checkbox">
+      </div>
+			<div>
+				I accept: <br />
+				&bull; <a href="https://www.weld.io/terms" target="_blank">Weld's Terms of Service</a><br>
 				&bull; <a target="_blank" id="domain-terms"></a><br>
-				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs användaravtal</a><br />
+				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs Terms of Service</a><br />
+      </div>
 			</fieldset>
 		</label>
 	</div>
 
-	<span id="errorSpan" class="hidden">Beklagar! Din email-adress finns redan registrerad hos Weld.</span><br />
+	<span id="errorSpan" class="hidden"></span><br />
 
-	<button type="submit" id="create-page-button" class="hidden">Skapa min sida!</button>
-
+	<button type="submit" id="create-page-button" class="hidden quicksite-button">Create my website!</button>
 
 </form>
+</div>
 
 <script>
 
@@ -86,7 +158,7 @@ $(document).ready(function() {
 			};
 
 			reader.readAsDataURL(file);
-			
+			$('#custom-file-upload').empty().append('<i class="fa fa-check-circle" aria-hidden="true"></i> Image successfully uploaded');
 		};
 
 		// Listen for a change in image input
@@ -94,12 +166,14 @@ $(document).ready(function() {
 
 		var autofillDomain = function() {
 			// TODO: Add if conditional on domain field filled, otherwise use userName
-			user.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
-			$('input[name=userDomain]').val(user.domain).trigger("change");
+     	
+			user.quickSite.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
+			$('input[name=userDomain]').val(user.quickSite.domain).trigger("change");
 		};
 
 		var searchDomain = function(user) {
-			user.domain = $('input[name=userDomain]').val();
+    	user.quickSite = user.quickSite || {};
+			user.quickSite.domain = $('input[name=userDomain]').val().replace(' ', '-');
 			// Invoke the searchDomainSE from here and pass it the user
 			searchDomainSE(user);
 		};
@@ -110,22 +184,48 @@ $(document).ready(function() {
 		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
 		$('input[name=userDomain]').on('change', searchDomain);
 
-		// Listen for .SE or .NU domain selection and add ToS link to domain-terms
-		$('#seButton').on('click', function () {
-			$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Avtal för toppdomänen .SE');
-			$('#accept-terms').toggleClass('hidden');
-			// TODO: Verify that it selects the .SE domain as user.domain
-			user.domain = user.domain.replace(/(.se|.nu)/, '');
-			user.domain = user.domain + '.se';
-		});
-
-		$('#nuButton').on('click', function () {
-			$('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Avtal för toppdomänen .NU');
-			$('#accept-terms').toggleClass('hidden');
-			// TODO: Verify that it selects the .NU domain as user.domain
-			user.domain = user.domain.replace(/(.se|.nu)/, '');
-			user.domain = user.domain + '.nu';
-		});
+		// Add .se button
+    var addSeButton = function () {
+    	$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button><br />');
+        $('#seButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.se').removeClass('nopadding redbutton');
+        // Listen for .SE domain selection and add ToS link to domain-terms
+        $('#seButton').on('click', function () {
+        $('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Terms for the .SE domain');
+        $('#accept-terms').toggleClass('hidden');
+          user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
+          user.quickSite.domain = user.quickSite.domain + '.se';
+        });
+    };
+    
+    // Add .nu button
+    var addNuButton = function () {
+    	$('#buttondiv').append('<button id="nuButton" class="quicksite-button" type="button"></button><br />');
+				$('#nuButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.nu').removeClass('redbutton');// TODO: Fix bug where it removes button on 2nd search
+        // Listen for .NU domain selection and add ToS link to domain-terms
+        $('#nuButton').on('click', function () {
+        $('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Terms for the .NU domain');
+        $('#accept-terms').toggleClass('hidden');
+          user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
+          user.quickSite.domain = user.quickSite.domain + '.nu';
+        });
+    };
+    
+    // Show 'unavailable' button and hide ToS & Signup button
+    var seNotAvailable = function () {
+    	$('#buttondiv').empty();
+     		$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button><br />')
+				$('#seButton').addClass('redbutton').html(user.quickSite.domain + '.se is unavailable').prop("disabled", true); 
+        $('#accept-terms').addClass('hidden');
+        $('#create-page-button').addClass('hidden');
+    };
+    
+    var nuNotAvailable = function () {
+    	$('#buttondiv').append('<button id="nuButton" class="quicksite-button" type="button"></button><br />');
+				$('#nuButton').addClass('redbutton').html(user.quickSite.domain + '.nu is unavailable').prop("disabled", true).addClass('redbutton');
+        // TODO: Make sure it doesn't hide the ToS and button when .SE available
+        $('#accept-terms').addClass('hidden');
+        $('#create-page-button').addClass('hidden');
+    };
 
 		// Listen for checkbox being checked and add the register button:
 		$('.accept-domain-checkbox').change(function() {
@@ -133,42 +233,31 @@ $(document).ready(function() {
 		});
 
 		var searchDomainSE = _.throttle(function(user) {
-				// TODO: Handle the show/hide of buttons
-				// Do a jQuery GET request to our domain-staging
 				// TODO: Change to the production server
-			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.se';
+			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.se';
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
-				console.log("Data: ", data);
-				console.log("textStatus: ", textStatus);
+				$('#buttondiv').empty();
+     		addSeButton();
 				searchDomainNU(user);
-				$('#seButton').html('Select ' + user.domain + '.se').removeClass('nopadding');
-				// TODO: Fix bug where it removes button on 2nd search
 			})
 			.fail(function(err) {
-				console.log("SE Not available:", err.responseText, err);
-				$('#seButton').html(user.domain + '.se is unavailable').prop("disabled", true); // TODO: Change color to red
+      	seNotAvailable();
 				searchDomainNU(user);
-				// Make the #seButton hide 
 			});
 		}, 3000);
-
-		// TODO: Add link to terms.
-		// TODO: Set user.domain equal to the chosen one
 
 		// After searching for a .SE domain, proceed to search for a .NU domain
-		var searchDomainNU = _.throttle(function(user) {
+		var searchDomainNU = function(user) {
 			// TODO: Handle the show/hide of buttons
 			// TODO: Change to the production server
-			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.domain + '.nu';
+			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-				$('#nuButton').html('Select ' + user.domain + '.nu').removeClass('nopadding');// TODO: Fix bug where it removes button on 2nd search
+      	addNuButton();
 			})
 			.fail(function(err) {
-				console.log("NU Not available:", err.responseText, err);
-				$('#nuButton').html(user.domain + '.nu is unavailable').prop("disabled", true); // TODO: Change color to red
-				// 
+        nuNotAvailable();
 			});
-		}, 3000);
+      };
 
 	// process the form
 	$('form').submit(function(e) {
@@ -183,14 +272,14 @@ $(document).ready(function() {
 			user.city = '{{user-city}}' || 'Stockholm';
 			user.zipcode = $('input[name=userZipcode]').val();
 			user.countrycode = '{{user-countrycode}}' || 'se';
-			user.tags = ["Opt-out: Welcome/Onboarding Email"];
+			user.tags = ["Sthlm Tech Fest 2016"];
 
 			// FILLING IN THE USER.QUICKSITE OBJECT:
 			var quickSiteTemplate = {
 				debug: true, // = don't register a real domain
 				name: "{{user.name}}'s website", // Note: you can use string templates and reference the entire `user` object
 				description: "Come and meet {{user.name}}!",
-				template: "my-template-slug",
+				template: "qsg-template",
 				elementData: {
 						"text-12": { data: { text: "My text" } },
 						"text-27": { data: { text: "{{user.name}}'s website" } },
@@ -205,7 +294,8 @@ $(document).ready(function() {
 				console.log("user in register: ", user);
 				
 				// TODO: Add HTTP POST below:
-				console.log("Data sent: ", user);
+				
+				console.log("User sent: ", user);
 				var registerUrl = SERVER_URL + 'api/users'; 
 				$.post(registerUrl, user)
 					.done(function(data) {
@@ -214,7 +304,7 @@ $(document).ready(function() {
 					})
 					.fail(function(err) {
 						console.log("Error registering: ", err.responseText, err);
-						$('#errorSpan').toggleClass('hidden'); // TODO: Make it dynamically insert the error message
+						$('#errorSpan').toggleClass('hidden').html(err.responseJSON.message); // TODO: Make it dynamically insert the error message
 						$(thisElement).trigger('change', ['error', {type: 'error', data: err}]);
 					})
 				;
