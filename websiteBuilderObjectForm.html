@@ -4,10 +4,15 @@
 }
 
 .quicksite-input {
-    margin: 5px 0;
-    padding: 8px 5px !important;
-    color: #4e5050 !important;
-    border-radius: 0px !important;
+		margin: 5px 0;
+		padding: 8px 5px !important;
+	  border: none !important;
+		border-radius: 0 !important;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
+    color: rgb(129, 127, 128);
+    font-size: 16px;
+    opacity: 1;
+    background-color: white;
 }
 
 .quicksite-input::-webkit-input-placeholder,
@@ -218,53 +223,32 @@ $(document).ready(function() {
 
 		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
 		$('input[name=userDomain]').on('change', searchDomain);
+	
+		var showTerms = function(dom) {
+					$('#' + dom + 'Button').addClass('greenbutton');
+					$('#' + dom + 'Button').siblings().removeClass('greenbutton');
+					$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Terms for the .' + dom + ' domain');
+					$('#accept-terms').removeClass('hidden');
+		}
+	
+		// Add domain selection button
+    var addButton = function (dom) {
+    	$('#buttondiv').append('<button id="' + dom + 'Button" class="quicksite-button" type="button">Select ' + user.quickSite.domain + '.' + dom + '</button>').removeClass('nopadding redbutton');
+        // Listen for domain selection and add ToS link to domain-terms
+        $('#' + dom + 'Button').on('click', function () {
+					showTerms(dom);
+					user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/g, '');
+					user.quickSite.domain = user.quickSite.domain + '.' + dom;
+        }); 
+    };
+	
+		// Domain not available:
+		var domainNotAvailable = function (dom) {
+     		$('#buttondiv').append('<button id="' + dom + 'Button" class="quicksite-button redbutton" type="button" disabled>' + user.quickSite.domain + '.' + dom + ' is unavailable' + '</button><br />');
+        $('#accept-terms').addClass('hidden');
+        $('#create-page-button').addClass('hidden');
+		};
 
-		// Add .se button
-    var addSeButton = function () {
-    	$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button>');
-        $('#seButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.se').removeClass('nopadding redbutton');
-        // Listen for .SE domain selection and add ToS link to domain-terms
-        $('#seButton').on('click', function () {
-				$(this).toggleClass('greenbutton');
-				$('#nuButton').removeClass('greenbutton');
-        $('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Terms for the .SE domain');
-        $('#accept-terms').toggleClass('hidden');
-          user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
-          user.quickSite.domain = user.quickSite.domain + '.se';
-        });
-    };
-    
-    // Add .nu button
-    var addNuButton = function () {
-    	$('#buttondiv').append('<button id="nuButton" class="quicksite-button" type="button"></button><br />');
-				$('#nuButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.nu').removeClass('redbutton');// TODO: Fix bug where it removes button on 2nd search
-        // Listen for .NU domain selection and add ToS link to domain-terms
-        $('#nuButton').on('click', function () {
-				$(this).toggleClass('greenbutton');
-				$('#seButton').removeClass('greenbutton');
-        $('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Terms for the .NU domain');
-        $('#accept-terms').toggleClass('hidden');
-          user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
-          user.quickSite.domain = user.quickSite.domain + '.nu';
-        });
-    };
-    
-    // Show 'unavailable' button and hide ToS & Signup button
-    var seNotAvailable = function () {
-    	$('#buttondiv').empty();
-     		$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button><br />')
-				$('#seButton').addClass('redbutton').html(user.quickSite.domain + '.se is unavailable').prop("disabled", true); 
-        $('#accept-terms').addClass('hidden');
-        $('#create-page-button').addClass('hidden');
-    };
-    
-    var nuNotAvailable = function () {
-    	$('#buttondiv').append('<button id="nuButton" class="quicksite-button" type="button"></button><br />');
-				$('#nuButton').addClass('redbutton').html(user.quickSite.domain + '.nu is unavailable').prop("disabled", true).addClass('redbutton');
-        // TODO: Make sure it doesn't hide the ToS and button when .SE available
-        $('#accept-terms').addClass('hidden');
-        $('#create-page-button').addClass('hidden');
-    };
 
 		// Listen for checkbox being checked and add the register button:
 		$('.accept-domain-checkbox').change(function() {
@@ -276,11 +260,13 @@ $(document).ready(function() {
 			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.se';
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
 				$('#buttondiv').empty();
-     		addSeButton();
+     		addButton('se');
 				searchDomainNU(user);
 			})
 			.fail(function(err) {
-      	seNotAvailable();
+				console.log(err);
+				$('#buttondiv').empty();
+      	domainNotAvailable('se');
 				searchDomainNU(user);
 			});
 		}, 3000);
@@ -291,10 +277,10 @@ $(document).ready(function() {
 			// TODO: Change to the production server
 			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-      	addNuButton();
+      	addButton('nu');
 			})
 			.fail(function(err) {
-        nuNotAvailable();
+        domainNotAvailable('nu');
 			});
       };
 
@@ -331,8 +317,6 @@ $(document).ready(function() {
 
 			var register = function() {
 				console.log("user in register: ", user);
-				
-				// TODO: Add HTTP POST below:
 				
 				console.log("User sent: ", user);
 				var registerUrl = SERVER_URL + 'api/users'; 
