@@ -6,28 +6,64 @@
 .quicksite-input {
     margin: 5px 0;
     padding: 8px 5px !important;
-    color: #4e5050;
+    color: #4e5050 !important;
     border-radius: 0px !important;
 }
 
 .quicksite-input::-webkit-input-placeholder,
 .quicksite-input::-moz-placeholder,
 .quicksite-input:-ms-input-placeholder {
-    color: #777979;
+    color: #777979 !important;
+}
+
+.width3rd {
+	width: 32.8% !important;
 }
 
 .redbutton {
   background-color: #f86060 !important;
 }
 
+.greenbutton {
+	background-color: #47e2a1 !important;
+}
+
 .quicksite-button {
-  margin-top: 20px;
-  padding: 15px;
+ 	margin-top: 1em;
+	padding: 15px;
+  margin-left: 3em;
+	cursor: pointer;
+}
+
+.accept-terms {
+	background-color: white;
 }
 
 input.accept-domain-checkbox {
     margin: 40px 5px;
     height: 15px;
+}
+
+/* Styling the checkbox */
+input[type="checkbox"]{
+cursor: pointer;
+-webkit-appearance: none;
+appearance: none;
+border-radius: 1px;
+background-color:white;
+box-sizing: border-box;
+position: relative;
+box-sizing: content-box ;
+width: 30px !important;
+height: 30px !important;
+border: 1px solid #777979;
+}
+input[type="checkbox"]:checked{
+  background-color: #47e2a1;
+}
+input[type="checkbox"]:focus{
+  outline: 0 none;
+  box-shadow: none;
 }
 
 .quicksite-fieldset div {
@@ -40,7 +76,6 @@ input.accept-domain-checkbox {
     border: 1px solid #8f9190;
     margin-top: 10px;
     color: #777979;
-    max-width: 50% !important;
     line-height: 1.5em;
 }
 
@@ -79,6 +114,8 @@ input[type="file"] {
 <form name="inputForm" autocomplete="on">
 
   <input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
+	
+		<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
   
 	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" value="880503-0510" required>
 
@@ -86,18 +123,16 @@ input[type="file"] {
 
 	<input class="quicksite-input" type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" value="0729385370" required>
 
-	<input class="quicksite-input" type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" value="Furusundsgatan 5" required>
+	<input class="quicksite-input width3rd" type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" value="Furusundsgatan 5" required>
 
-	<input class="quicksite-input" type="text" id="user-city" name="userCity" placeholder="Stockholm" value="Stockholm">
+	<input class="quicksite-input width3rd" type="text" id="user-city" name="userCity" placeholder="Stockholm" value="Stockholm">
 
-	<input class="quicksite-input" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
+	<input class="quicksite-input width3rd" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
 
 <label for="getimage" class="custom-file-upload" id="custom-file-upload">
   <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
 </label>
 <input class="quicksite-input" name="file" id="getimage" type="file" accept="image/*"> 
-
-	<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
 
 	<div id="buttondiv">
 	</div>
@@ -127,7 +162,7 @@ input[type="file"] {
 
 <script>
 
-var DEBUG_MODE = true;
+var DEBUG_MODE = 'staging';
 
 var SERVER_URL = 'https://www.weld.io/';
 if (DEBUG_MODE === 'staging') {
@@ -186,10 +221,12 @@ $(document).ready(function() {
 
 		// Add .se button
     var addSeButton = function () {
-    	$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button><br />');
+    	$('#buttondiv').append('<button id="seButton" class="quicksite-button" type="button"></button>');
         $('#seButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.se').removeClass('nopadding redbutton');
         // Listen for .SE domain selection and add ToS link to domain-terms
         $('#seButton').on('click', function () {
+				$(this).toggleClass('greenbutton');
+				$('#nuButton').removeClass('greenbutton');
         $('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Terms for the .SE domain');
         $('#accept-terms').toggleClass('hidden');
           user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
@@ -203,6 +240,8 @@ $(document).ready(function() {
 				$('#nuButton').prop("disabled", false).html('Select ' + user.quickSite.domain + '.nu').removeClass('redbutton');// TODO: Fix bug where it removes button on 2nd search
         // Listen for .NU domain selection and add ToS link to domain-terms
         $('#nuButton').on('click', function () {
+				$(this).toggleClass('greenbutton');
+				$('#seButton').removeClass('greenbutton');
         $('#domain-terms').attr("href", "https://www.iis.se/docs/terms-and-conditions-nu.pdf").text('Terms for the .NU domain');
         $('#accept-terms').toggleClass('hidden');
           user.quickSite.domain = user.quickSite.domain.replace(/(.se|.nu)/, '');
