@@ -4,21 +4,23 @@
 }
 
 .quicksite-input {
+		font-family: $weld-light !important;
 		margin: 5px 0;
 		padding: 8px 5px !important;
-	  border: none !important;
+		border: none !important;
 		border-radius: 0 !important;
-    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
-    color: rgb(129, 127, 128);
-    font-size: 16px;
-    opacity: 1;
-    background-color: white;
+		box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
+		color: rgb(129, 127, 128);
+		font-size: 16px;
+		opacity: 1;
+		background-color: white;
 }
 
 .quicksite-input::-webkit-input-placeholder,
 .quicksite-input::-moz-placeholder,
 .quicksite-input:-ms-input-placeholder {
-    color: #777979 !important;
+		color: #777979 !important;
+		font-family: $weld-light !important;
 }
 
 .width3rd {
@@ -26,7 +28,7 @@
 }
 
 .redbutton {
-  background-color: #f86060 !important;
+	background-color: #f86060 !important;
 }
 
 .greenbutton {
@@ -34,9 +36,9 @@
 }
 
 .quicksite-button {
- 	margin-top: 1em;
+	margin-top: 1em;
 	padding: 15px;
-  margin-left: 3em;
+	margin-left: 3em;
 	cursor: pointer;
 }
 
@@ -45,8 +47,8 @@
 }
 
 input.accept-domain-checkbox {
-    margin: 40px 5px;
-    height: 15px;
+		margin: 40px 5px;
+		height: 15px;
 }
 
 /* Styling the checkbox */
@@ -64,58 +66,64 @@ height: 30px !important;
 border: 1px solid #777979;
 }
 input[type="checkbox"]:checked{
-  background-color: #47e2a1;
+	background-color: #47e2a1;
 }
 input[type="checkbox"]:focus{
-  outline: 0 none;
-  box-shadow: none;
+	outline: 0 none;
+	box-shadow: none;
 }
 
 .quicksite-fieldset div {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 15px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 15px;
 }
 
 .quicksite-fieldset {
-    border: 1px solid #8f9190;
-    margin-top: 10px;
-    color: #777979;
-    line-height: 1.5em;
+		border: 1px solid #8f9190;
+		margin-top: 10px;
+		color: #777979;
+		line-height: 1.5em;
 }
 
 .quicksite-fieldset a {
-  color: #337ab7;
-  text-decoration: none;
+	color: #337ab7;
+	text-decoration: none;
 }
 
 .quicksite-field a:hover {
-  color: #23527c;
+	color: #23527c;
 }
 
 input[type="file"] {
-    display: none;
+		display: none;
 }
 
 .custom-file-upload {
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: white;
-    color: #c7c9cb;
-    border: 2px solid #c7c9cb;
+		display: inline-block;
+		padding: 6px 12px;
+		cursor: pointer;
+		width: 100%;
+		box-sizing: border-box;
+		background-color: white;
+		color: #c7c9cb;
+		border: 2px solid #c7c9cb;
 }
 
 .fa-check-circle {
-  color: #47e2a1;
+	color: #47e2a1;
 }
 
 #errordiv {
-	  background-color: white;
-    margin-top: 20px;
-    padding: 15px;
+		background-color: white;
+		margin-top: 20px;
+		padding: 15px;
+		color: #f86060;
+}
+
+#create-page-button {
+	margin: 0 !important;
+	width: 100% !important;
 }
 
 </style>
@@ -124,10 +132,14 @@ input[type="file"] {
 <div class="weld-element">
 <form name="inputForm" autocomplete="on">
 
-  <input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
+	<input class="quicksite-input" type="text" id="user-company" placeholder="Your Company Name" name="userCompany" required>
+	
+	<input class="quicksite-input" type="text" id="user-tagline" placeholder="Your company's one-liner goes here" name="userTagline" required>
+
+	<input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
 	
 		<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
-  
+	
 	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" value="880503-0510" required>
 
 	<input class="quicksite-input" type="email" id="user-email" placeholder="example@gmail.com" name="userEmail" value="andre.elmoznino@gmail.com" required>
@@ -141,7 +153,7 @@ input[type="file"] {
 	<input class="quicksite-input width3rd" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
 
 <label for="getimage" class="custom-file-upload" id="custom-file-upload">
-  <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
+	<i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
 </label>
 <input class="quicksite-input" name="file" id="getimage" type="file" accept="image/*"> 
 
@@ -151,15 +163,15 @@ input[type="file"] {
 	<div class="accept-terms hidden" id="accept-terms">
 		<label>
 			<fieldset class="quicksite-fieldset">
-      <div>
-        <input type="checkbox" class="accept-domain-checkbox">
-      </div>
+			<div>
+				<input type="checkbox" class="accept-domain-checkbox">
+			</div>
 			<div>
 				I accept: <br />
 				&bull; <a href="https://www.weld.io/terms" target="_blank">Weld's Terms of Service</a><br>
 				&bull; <a target="_blank" id="domain-terms"></a><br>
 				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs Terms of Service</a><br />
-      </div>
+			</div>
 			</fieldset>
 		</label>
 	</div>
@@ -211,9 +223,7 @@ $(document).ready(function() {
 		$('#getimage').on('change', getPictureFile);
 
 		var autofillDomain = function() {
-			// TODO: Add if conditional on domain field filled, otherwise use userName
-     	
-			user.quickSite.domain = $('input[name=userName]').val().toLowerCase().replace(/[\s]/g, '');
+			user.quickSite.domain = $('input[name=userCompany]').val().toLowerCase().replace(/[\s]/g, '');
 			$('input[name=userDomain]').val(user.quickSite.domain).trigger("change");
 		};
 
@@ -225,7 +235,7 @@ $(document).ready(function() {
 		};
 
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
-		$('input[name=userName]').on('change', autofillDomain);
+		$('input[name=userCompany]').on('change', autofillDomain);
 
 		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
 		$('input[name=userDomain]').on('change', searchDomain);
@@ -309,11 +319,12 @@ $(document).ready(function() {
 			// FILLING IN THE USER.QUICKSITE OBJECT:
 			var quickSiteTemplate = {
 				debug: true, // = don't register a real domain
-				name: "{{user.name}}'s website", // Note: you can use string templates and reference the entire `user` object
-				description: "Come and meet {{user.name}}!",
+				name: $('input[name=userCompany]').val(), // Note: you can use string templates and reference the entire `user` object
+				description: $('input[name=userTagline]').val(),
 				template: "sthlmtechweldsite-template",
 				elementData: {
-						"text-1640": { data: { text: "{{user.name}}'s website" } },
+						"text-1640": { data: { text: $('input[name=userCompany]').val() } },
+						"text-20808": { data: { text: $('input[name=userTagline]').val() } },
 						"image-20796": { data: { imageSource: "{{UPLOADED_IMAGE}}" } },
 				},
 			};
