@@ -112,6 +112,12 @@ input[type="file"] {
   color: #47e2a1;
 }
 
+#errordiv {
+	  background-color: white;
+    margin-top: 20px;
+    padding: 15px;
+}
+
 </style>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" type="text/css">
@@ -158,7 +164,7 @@ input[type="file"] {
 		</label>
 	</div>
 
-	<span id="errorSpan" class="hidden"></span><br />
+	<div id="errordiv" class="hidden"></div><br />
 
 	<button type="submit" id="create-page-button" class="hidden quicksite-button">Create my website!</button>
 
@@ -198,7 +204,7 @@ $(document).ready(function() {
 			};
 
 			reader.readAsDataURL(file);
-			$('#custom-file-upload').empty().append('<i class="fa fa-check-circle" aria-hidden="true"></i> Image successfully uploaded');
+			$('#custom-file-upload').empty().append('<i class="fa fa-check-circle" aria-hidden="true"></i> Image successfully uploaded').css('color', '#47e2a1');
 		};
 
 		// Listen for a change in image input
@@ -223,13 +229,14 @@ $(document).ready(function() {
 
 		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
 		$('input[name=userDomain]').on('change', searchDomain);
-	
+		
+		// Toggles selected domain and shows terms
 		var showTerms = function(dom) {
 					$('#' + dom + 'Button').addClass('greenbutton');
 					$('#' + dom + 'Button').siblings().removeClass('greenbutton');
 					$('#domain-terms').attr("href", "https://www.iis.se/domaner/registrera/se/villkor/").text('Terms for the .' + dom + ' domain');
 					$('#accept-terms').removeClass('hidden');
-		}
+		};
 	
 		// Add domain selection button
     var addButton = function (dom) {
@@ -242,19 +249,19 @@ $(document).ready(function() {
         }); 
     };
 	
-		// Domain not available:
+		// Domain not available: appends buttons and hides ToS + create page button
 		var domainNotAvailable = function (dom) {
-     		$('#buttondiv').append('<button id="' + dom + 'Button" class="quicksite-button redbutton" type="button" disabled>' + user.quickSite.domain + '.' + dom + ' is unavailable' + '</button><br />');
+     		$('#buttondiv').append('<button id="' + dom + 'Button" class="quicksite-button redbutton" type="button" disabled>' + user.quickSite.domain + '.' + dom + ' is unavailable' + '</button>');
         $('#accept-terms').addClass('hidden');
         $('#create-page-button').addClass('hidden');
 		};
-
 
 		// Listen for checkbox being checked and add the register button:
 		$('.accept-domain-checkbox').change(function() {
 			$('#create-page-button').toggleClass('hidden');
 		});
-
+		
+		// Search if .se is available
 		var searchDomainSE = _.throttle(function(user) {
 				// TODO: Change to the production server
 			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.se';
@@ -304,11 +311,10 @@ $(document).ready(function() {
 				debug: true, // = don't register a real domain
 				name: "{{user.name}}'s website", // Note: you can use string templates and reference the entire `user` object
 				description: "Come and meet {{user.name}}!",
-				template: "qsg-template",
+				template: "sthlmtechweldsite-template",
 				elementData: {
-						"text-12": { data: { text: "My text" } },
-						"text-27": { data: { text: "{{user.name}}'s website" } },
-						"image-19": { data: { imageSource: "{{UPLOADED_IMAGE}}" } },
+						"text-1640": { data: { text: "{{user.name}}'s website" } },
+						"image-20796": { data: { imageSource: "{{UPLOADED_IMAGE}}" } },
 				},
 			};
 
@@ -327,7 +333,7 @@ $(document).ready(function() {
 					})
 					.fail(function(err) {
 						console.log("Error registering: ", err.responseText, err);
-						$('#errorSpan').toggleClass('hidden').html(err.responseJSON.message); // TODO: Make it dynamically insert the error message
+						$('#errordiv').toggleClass('hidden').html(err.responseJSON.message); // TODO: Make it dynamically insert the error message
 						$(thisElement).trigger('change', ['error', {type: 'error', data: err}]);
 					})
 				;
