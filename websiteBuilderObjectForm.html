@@ -107,8 +107,10 @@ input[type="file"] {
     width: 100%;
     box-sizing: border-box;
     background-color: white;
-    color: #c7c9cb;
-    border: 2px solid #c7c9cb;
+	  border: none !important;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
+    color: #8f9190 !important;
+    font-size: 16px;
 }
 
 .fa-check-circle {
@@ -141,20 +143,20 @@ input[type="file"] {
 	
 		<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
   
-	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" value="880503-0510" required>
+	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" required>
 
-	<input class="quicksite-input" type="email" id="user-email" placeholder="example@gmail.com" name="userEmail" value="andre.elmoznino@gmail.com" required>
+	<input class="quicksite-input" type="email" id="user-email" placeholder="example@gmail.com" name="userEmail" required>
 
-	<input class="quicksite-input" type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" value="0729385370" required>
+	<input class="quicksite-input" type="text" id="user-phone" placeholder="0701234567" name="userPhone" pattern="0[1-9]{0,3}[- ]?[0-9 ]{6,9}" required>
 
-	<input class="quicksite-input width3rd" type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" value="Furusundsgatan 5" required>
+	<input class="quicksite-input width3rd" type="text" id="user-address" placeholder="Kungsgatan 1" name="userAddress" required>
 
-	<input class="quicksite-input width3rd" type="text" id="user-city" name="userCity" placeholder="Stockholm" value="Stockholm">
+	<input class="quicksite-input width3rd" type="text" id="user-city" name="userCity" placeholder="Stockholm" value="Stockholm" required>
 
-	<input class="quicksite-input width3rd" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
+	<input class="quicksite-input width3rd" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" required> 
 
 <label for="getimage" class="custom-file-upload" id="custom-file-upload">
-  <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
+  <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your hero image
 </label>
 <input class="quicksite-input" name="file" id="getimage" type="file" accept="image/*"> 
 
@@ -290,16 +292,18 @@ $(document).ready(function() {
 		}, 1000);
 
 		// After searching for a .SE domain, proceed to search for a .NU domain
-		var searchDomainNU = _.debounce(function(user) {
+		var searchDomainNU = function(user) {
 			// TODO: Change to the production server
 			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
-      	addButton('nu');
+      	if ( $('#buttondiv:not(:has(#nuButton))')) {
+				addButton('nu');
+				};
 			})
 			.fail(function(err) {
         domainNotAvailable('nu');
 			});
-      }, 1000);
+      };
 
 	// process the form
 	$('form').submit(function(e) {
