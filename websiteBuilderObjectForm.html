@@ -4,23 +4,24 @@
 }
 
 .quicksite-input {
-		font-family: $weld-light !important;
+		font-family: 'weld-regular', sans-serif !important;
 		margin: 5px 0;
 		padding: 8px 5px !important;
-		border: none !important;
+	  border: none !important;
 		border-radius: 0 !important;
-		box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
-		color: rgb(129, 127, 128);
-		font-size: 16px;
-		opacity: 1;
-		background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px inset;
+    color: #4e5050 !important;
+    font-size: 16px;
+    opacity: 1;
+    background-color: white;
 }
 
+/* SASS variables should be with '' and no $ before, e.g. 'weld-light' */
 .quicksite-input::-webkit-input-placeholder,
 .quicksite-input::-moz-placeholder,
 .quicksite-input:-ms-input-placeholder {
-		color: #777979 !important;
-		font-family: $weld-light !important;
+    color: #8f9190 !important;
+		font-family: 'weld-light', sans-serif !important;
 }
 
 .width3rd {
@@ -28,7 +29,7 @@
 }
 
 .redbutton {
-	background-color: #f86060 !important;
+  background-color: #f86060 !important;
 }
 
 .greenbutton {
@@ -36,9 +37,9 @@
 }
 
 .quicksite-button {
-	margin-top: 1em;
+ 	margin-top: 1em;
 	padding: 15px;
-	margin-left: 3em;
+  margin-left: 3em;
 	cursor: pointer;
 }
 
@@ -47,8 +48,8 @@
 }
 
 input.accept-domain-checkbox {
-		margin: 40px 5px;
-		height: 15px;
+    margin: 40px 5px;
+    height: 15px;
 }
 
 /* Styling the checkbox */
@@ -66,58 +67,58 @@ height: 30px !important;
 border: 1px solid #777979;
 }
 input[type="checkbox"]:checked{
-	background-color: #47e2a1;
+  background-color: #47e2a1;
 }
 input[type="checkbox"]:focus{
-	outline: 0 none;
-	box-shadow: none;
+  outline: 0 none;
+  box-shadow: none;
 }
 
 .quicksite-fieldset div {
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 15px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 15px;
 }
 
 .quicksite-fieldset {
-		border: 1px solid #8f9190;
-		margin-top: 10px;
-		color: #777979;
-		line-height: 1.5em;
+    border: 1px solid #8f9190;
+    margin-top: 10px;
+    color: #777979;
+    line-height: 1.5em;
 }
 
 .quicksite-fieldset a {
-	color: #337ab7;
-	text-decoration: none;
+  color: #337ab7;
+  text-decoration: none;
 }
 
 .quicksite-field a:hover {
-	color: #23527c;
+  color: #23527c;
 }
 
 input[type="file"] {
-		display: none;
+    display: none;
 }
 
 .custom-file-upload {
-		display: inline-block;
-		padding: 6px 12px;
-		cursor: pointer;
-		width: 100%;
-		box-sizing: border-box;
-		background-color: white;
-		color: #c7c9cb;
-		border: 2px solid #c7c9cb;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    color: #c7c9cb;
+    border: 2px solid #c7c9cb;
 }
 
 .fa-check-circle {
-	color: #47e2a1;
+  color: #47e2a1;
 }
 
 #errordiv {
-		background-color: white;
-		margin-top: 20px;
-		padding: 15px;
+	  background-color: white;
+    margin-top: 20px;
+    padding: 15px;
 		color: #f86060;
 }
 
@@ -136,10 +137,10 @@ input[type="file"] {
 	
 	<input class="quicksite-input" type="text" id="user-tagline" placeholder="Your company's one-liner goes here" name="userTagline" required>
 
-	<input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
+  <input class="quicksite-input" type="text" id="user-name" placeholder="Firstname Lastname" name="userName" required>
 	
 		<input class="quicksite-input" type="text" id="user-domainname" placeholder="ChooseYourDomain" name="userDomain">
-	
+  
 	<input class="quicksite-input" type="text" id="personnumber" placeholder="yymmdd-XXXX" name="userPersonalNumber" pattern="^(19|20)?([0-9]{6})[- ]?([0-9]{4})$" value="880503-0510" required>
 
 	<input class="quicksite-input" type="email" id="user-email" placeholder="example@gmail.com" name="userEmail" value="andre.elmoznino@gmail.com" required>
@@ -153,7 +154,7 @@ input[type="file"] {
 	<input class="quicksite-input width3rd" type="text" id="user-zipcode" placeholder="12345" name="userZipcode" value="11537" required> 
 
 <label for="getimage" class="custom-file-upload" id="custom-file-upload">
-	<i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
+  <i class="fa fa-cloud-upload" aria-hidden="true"></i> Upload your image
 </label>
 <input class="quicksite-input" name="file" id="getimage" type="file" accept="image/*"> 
 
@@ -163,15 +164,15 @@ input[type="file"] {
 	<div class="accept-terms hidden" id="accept-terms">
 		<label>
 			<fieldset class="quicksite-fieldset">
-			<div>
-				<input type="checkbox" class="accept-domain-checkbox">
-			</div>
+      <div>
+        <input type="checkbox" class="accept-domain-checkbox">
+      </div>
 			<div>
 				I accept: <br />
 				&bull; <a href="https://www.weld.io/terms" target="_blank">Weld's Terms of Service</a><br>
 				&bull; <a target="_blank" id="domain-terms"></a><br>
 				&bull; <a href="https://www.nameisp.com/sv/about/conditions" target="_blank">NameISPs Terms of Service</a><br />
-			</div>
+      </div>
 			</fieldset>
 		</label>
 	</div>
@@ -235,7 +236,7 @@ $(document).ready(function() {
 		};
 
 		// Listen for a change in the username input and run autofillDomain every 1 sec.
-		$('input[name=userCompany]').on('change', autofillDomain);
+		$('input[name=userCompany]').on('keyup change', autofillDomain);
 
 		// Listen for a change in the domainname input and run autofillDomain every 1 sec.
 		$('input[name=userDomain]').on('change', searchDomain);
@@ -272,7 +273,7 @@ $(document).ready(function() {
 		});
 		
 		// Search if .se is available
-		var searchDomainSE = _.throttle(function(user) {
+		var searchDomainSE = _.debounce(function(user) {
 				// TODO: Change to the production server
 			var searchDomainUrl = "//domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.se';
 			$.get(searchDomainUrl, function (data, textStatus, jqXHR) {
@@ -286,11 +287,10 @@ $(document).ready(function() {
       	domainNotAvailable('se');
 				searchDomainNU(user);
 			});
-		}, 3000);
+		}, 1000);
 
 		// After searching for a .SE domain, proceed to search for a .NU domain
-		var searchDomainNU = function(user) {
-			// TODO: Handle the show/hide of buttons
+		var searchDomainNU = _.debounce(function(user) {
 			// TODO: Change to the production server
 			var searchDomainUrlNu = "https://domain-production-weld.herokuapp.com/api/lookup/" + user.quickSite.domain + '.nu';
 			$.get(searchDomainUrlNu, function (data, textStatus, jqXHR) {
@@ -299,7 +299,7 @@ $(document).ready(function() {
 			.fail(function(err) {
         domainNotAvailable('nu');
 			});
-      };
+      }, 1000);
 
 	// process the form
 	$('form').submit(function(e) {
@@ -325,8 +325,12 @@ $(document).ready(function() {
 				elementData: {
 						"text-1640": { data: { text: $('input[name=userCompany]').val() } },
 						"text-20808": { data: { text: $('input[name=userTagline]').val() } },
-						"image-20796": { data: { imageSource: "{{UPLOADED_IMAGE}}" } },
+						"text-20794": { "events": { "click-1": { "action": { "options": { "url": "mailto:{{user.email}}" } } } }},
 				},
+			};
+			
+			if (user.quickSite.image.base64) {
+				quickSiteTemplate.elementData['image-20796'] = { data: { imageSource: "{{UPLOADED_IMAGE}}" } };
 			};
 
 			// Merge quickSiteTemplate into user.quickSite without overwriting
@@ -344,7 +348,7 @@ $(document).ready(function() {
 					})
 					.fail(function(err) {
 						console.log("Error registering: ", err.responseText, err);
-						$('#errordiv').toggleClass('hidden').html(err.responseJSON.message); // TODO: Make it dynamically insert the error message
+						$('#errordiv').removeClass('hidden').html(err.responseJSON.message); // TODO: Make it dynamically insert the error message
 						$(thisElement).trigger('change', ['error', {type: 'error', data: err}]);
 					})
 				;
